@@ -4,8 +4,8 @@ set -e
 cd /app
 
 # Use the PHP/web runtime user. Override in Dokploy env if needed.
-RUNTIME_USER="${APP_RUNTIME_USER:-www-data}"
-RUNTIME_GROUP="${APP_RUNTIME_GROUP:-www-data}"
+RUNTIME_USER="${APP_RUNTIME_USER:-nobody}"
+RUNTIME_GROUP="${APP_RUNTIME_GROUP:-nogroup}"
 
 # Ensure writable runtime paths exist.
 mkdir -p storage/app/public/basset
@@ -25,3 +25,7 @@ php artisan storage:link || true
 php artisan basset:fresh || true
 php artisan optimize:clear || true
 php artisan config:cache || true
+
+# basset:fresh can recreate files as root when script runs as root; fix ownership afterwards.
+chown -R "$RUNTIME_USER:$RUNTIME_GROUP" storage bootstrap/cache public/storage || true
+chmod -R ug+rwX storage bootstrap/cache
