@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'sevdesk' => [
+        'api_key' => env('SEVDESK_API_KEY'),
+        'base_url' => env('SEVDESK_BASE_URL', 'https://my.sevdesk.de/api/v1'),
+        'timeout' => (int) env('SEVDESK_TIMEOUT', 20),
+        'auth_mode' => env('SEVDESK_AUTH_MODE', 'query'),
+    ],
+
 ];

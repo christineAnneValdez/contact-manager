@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\ContactRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\Artisan;
+use Throwable;
 
 /**
  * Class ContactCrudController
@@ -39,12 +41,16 @@ class ContactCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-          CRUD::column('name');
+        CRUD::addButtonFromView('top', 'sync_sevdesk', 'sync_sevdesk', 'beginning');
+        CRUD::addButtonFromView('top', 'push_sevdesk', 'push_sevdesk', 'beginning');
+
+        CRUD::column('name');
         CRUD::column('email');
         CRUD::addColumn([
             'name' => 'image',
             'type' => 'image',
             'label' => 'Contact Image',
+            'disk' => 'public',
             'height' => '60px',
             'width'  => '60px',
         ]);
@@ -79,6 +85,7 @@ class ContactCrudController extends CrudController
             'name'  => 'image',
             'label' => 'Contact Image',
             'type'  => 'image',
+            'disk' => 'public',
             'height' => '120px',
             'width'  => '120px',
         ]);
@@ -96,4 +103,29 @@ class ContactCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+    public function syncSevDesk()
+    {
+        try {
+            Artisan::call('sevdesk:sync-contacts');
+            \Alert::success('sevDesk contacts synced successfully.')->flash();
+        } catch (Throwable $e) {
+            \Alert::error('sevDesk sync failed: '.$e->getMessage())->flash();
+        }
+
+        return redirect(backpack_url('contact'));
+    }
+
+    public function pushSevDesk()
+    {
+        try {
+            Artisan::call('sevdesk:push-contacts');
+            \Alert::success('Local contacts pushed to sevDesk successfully.')->flash();
+        } catch (Throwable $e) {
+            \Alert::error('sevDesk push failed: '.$e->getMessage())->flash();
+        }
+
+        return redirect(backpack_url('contact'));
+    }
 }
+

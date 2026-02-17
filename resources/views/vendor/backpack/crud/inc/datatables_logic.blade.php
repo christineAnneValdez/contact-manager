@@ -296,7 +296,8 @@
               "url": "{!! url($crud->route.'/search').'?'.Request::getQueryString() !!}",
               "type": "POST",
               "data": {
-                "totalEntryCount": "{{$crud->getOperationSetting('totalEntryCount') ?? false}}"
+                "totalEntryCount": "{{$crud->getOperationSetting('totalEntryCount') ?? false}}",
+                "_token": "{{ csrf_token() }}"
             },
           },
           dom:
@@ -491,3 +492,4 @@
   </script>
 
   @include('crud::inc.details_row_logic')
+

@@ -10,22 +10,16 @@ class Contact extends Model
     use CrudTrait;
 
     protected $fillable = [
+        'sevdesk_id',
         'name',
         'email',
         'image',
     ];
 
-
-      public function setImageAttribute($value)
+    public function setImageAttribute($value)
     {
         if ($value) {
             $this->attributes['image'] = $value->store('contacts', 'public');
         }
-    }
-
-
-    public function getImageAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : null;
     }
 }
